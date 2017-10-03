@@ -1,0 +1,8 @@
+---
+title: "FNMI"
+author: "Greg Rousell"
+date: "October 3, 2017"
+output: html_document
+---
+
+R Scripts for FNMI yearly analyses. Self ID and Tuition Agreement Students. 
