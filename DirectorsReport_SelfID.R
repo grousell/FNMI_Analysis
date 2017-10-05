@@ -14,7 +14,7 @@ na_NonFNMI <- function (x) {
 }
 
 
-df <- read_excel("C:/Users/grousell/OneDrive - Grand Erie DSB/Student Data/SIS Data/Greg Rousell - 27 September 2017 - All Students with Self ID.XLSX",
+FNMI <- read_excel("C:/Users/grousell/OneDrive - Grand Erie DSB/Student Data/SIS Data/Greg Rousell - 27 September 2017 - All Students with Self ID.XLSX",
                sheet = "Export for GR") %>%
   rename (FNMI = `Aboriginal Type Name`,
           Grade = `Grade Level`) %>%
@@ -25,10 +25,46 @@ df <- read_excel("C:/Users/grousell/OneDrive - Grand Erie DSB/Student Data/SIS D
           Panel = recode.panel(Mident),
           FNMI_R = ifelse (FNMI == "First Nations", "FNMI", 
                          ifelse(FNMI == "Inuit", "FNMI",
-                                ifelse (FNMI == "Métis", "FNMI", "Non FNMI"))))
+                                ifelse (FNMI == "Métis", "FNMI", "Non FNMI"))),
+          Grade = recode (Grade, 
+                          "JK" = "JK",
+                          "SK" = "SK",
+                          "1" = "Grade 1",
+                          "2" = "Grade 2",
+                          "3" = "Grade 3",
+                          "4" = "Grade 4",
+                          "5" = "Grade 5",
+                          "6" = "Grade 6",
+                          "7" = "Grade 7",
+                          "8" = "Grade 8",
+                          "9" = "Grade 9",
+                          "10" = "Grade 10",
+                          "11" = "Grade 11",
+                          "12" = "Grade 12"),
+          GradeSort = recode (Grade, 
+                          "JK" = "01_JK",
+                          "SK" = "02_SK",
+                          "Grade 1" = "03_G1",
+                          "Grade 2" = "04_G2",
+                          "Grade 3" = "05_G3",
+                          "Grade 4" = "06_G4",
+                          "Grade 5" = "07_G5",
+                          "Grade 6" = "08_G6",
+                          "Grade 7" = "09_G7",
+                          "Grade 8" = "10_G8",
+                          "Grade 9" = "11_G9",
+                          "Grade 10" = "12_G10",
+                          "Grade 11" = "13_G11",
+                          "Grade 12" = "14_G12"))
 
 
-df$FNMI_R <- na_NonFNMI(df$FNMI_R)
+FNMI$FNMI_R <- na_NonFNMI(FNMI$FNMI_R)
+
+
+
+df2 <- df %>%
+  select (Mident, FNMI, OEN)
+
 
 table (df$FNMI_R)
 # Check that recoding worked
