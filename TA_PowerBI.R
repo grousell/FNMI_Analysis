@@ -1,6 +1,5 @@
 # Tuition Agreement Students Annual Report -------------------------------
 
-
 library(tidyverse)
 library(readxl)
 
@@ -54,6 +53,6 @@ SixNation_Sem2 <- df %>%
   filter (month == 3) %>%
   left_join(sem2, by = c("StudentID" = "OEN")) %>%
   mutate (AllCredits = ifelse (Percent > 99, 1, 0)) %>%
-  mutate (TEST = "TEST")
+  mutate (TEST = ifelse (Percent <50, "Less than 50", "Greater than 50"))
 
 
