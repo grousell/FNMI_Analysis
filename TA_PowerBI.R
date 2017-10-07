@@ -36,7 +36,7 @@ df <- read_csv ("C:/Users/grousell/OneDrive - Grand Erie DSB/PowerBI/MasterData/
                           "12" = "Grade 12"))
 
 SixNationALL <- df %>%
-  select (MIDENT, OEN, GivenName, Surname, SelfID, tuition, Grade) %>%
+  select (MIDENT, OEN, GivenName, Surname, SelfID, tuition, Grade, Grade_Sort) %>%
   mutate (dup = duplicated (OEN)) %>%
   filter (dup == "FALSE") %>%
   select (-dup)
