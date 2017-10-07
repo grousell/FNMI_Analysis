@@ -26,9 +26,10 @@ df <- read_csv ("C:/Users/grousell/OneDrive - Grand Erie DSB/PowerBI/MasterData/
           month)
 
 SixNationALL <- df %>%
-  select (MIDENT, OEN, GivenName, Surname, SelfID, tuition) %>%
+  select (MIDENT, OEN, GivenName, Surname, SelfID, tuition, Grade) %>%
   mutate (dup = duplicated (OEN)) %>%
-  filter (dup == "FALSE")
+  filter (dup == "FALSE") %>%
+  select (-dup)
 
 # Semster 1 RC ------------------------------------------------------------
 
