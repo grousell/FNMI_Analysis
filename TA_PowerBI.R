@@ -23,7 +23,17 @@ df <- read_csv ("C:/Users/grousell/OneDrive - Grand Erie DSB/PowerBI/MasterData/
           Exceptiona,
           SelfID,
           tuition,
-          month)
+          month) %>%
+  mutate (Grade_Sort = recode (Grade,
+                          "9" = "01_9",
+                          "10" = "02_10",
+                          "11" = "03_11",
+                          "12" = "04_12"),
+          Grade = recode (Grade,
+                          "9" = "Grade 9",
+                          "10" = "Grade 10",
+                          "11" = "Grade 11",
+                          "12" = "Grade 12"))
 
 SixNationALL <- df %>%
   select (MIDENT, OEN, GivenName, Surname, SelfID, tuition, Grade) %>%
