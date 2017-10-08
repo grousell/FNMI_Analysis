@@ -46,9 +46,9 @@ SixNationALL <- df %>%
 sem1 <- read_csv("C:/Users/grousell/OneDrive - Grand Erie DSB/Report Card/Data/Secondary/20162017_SecondaryRC_T1.csv") %>%
   #filter ( OEN %in% oens) %>%
   mutate (semester = "1",
-          OEN = parse_number(OEN)) 
+          OEN = parse_number(OEN)) %>%
+  filter (!is.na (`Potential Credit Hrs`)) 
   
-
 sem1Credits <- sem1 %>%
   select (MIDENT = SCHOOLID,
           OEN,
@@ -59,9 +59,9 @@ sem1Credits <- sem1 %>%
           Final,
           semester) %>%
   group_by (OEN) %>%
-  summarise (`Potential Credit Hours` = sum (PotHours, na.rm = TRUE),
-             `Earned Credits`  = sum (Earned, na.rm = TRUE),
-             Percent = round ((`Earned Credits` / `Potential Credit Hours`) * 100,1)) %>%
+  summarise (PotHours = sum (PotHours, na.rm = TRUE),
+             Earned  = sum (Earned, na.rm = TRUE),
+             Percent = round ((Earned / PotHours) * 100,1)) %>%
   mutate (OEN = parse_number(OEN))
 
 # Semster 2 RC ------------------------------------------------------------
@@ -69,7 +69,8 @@ sem1Credits <- sem1 %>%
 sem2 <- read_excel("C:/Users/grousell/OneDrive - Grand Erie DSB/Report Card/Data/Secondary/Greg Rousell - 30 June 2017 - 20162017_SecondaryRC_T2.xlsx",
                    sheet = "20162017_SecondaryRC_T2") %>%
   mutate (semester = "2",
-          OEN = parse_number(OEN))
+          OEN = parse_number(OEN)) %>%
+  filter (!is.na (`Potential Credit Hrs`)) 
 
 sem2Credits <- sem2 %>%
   select (MIDENT = SCHOOLID,
@@ -83,9 +84,9 @@ sem2Credits <- sem2 %>%
   mutate (PotHours = parse_number(PotHours),
           Earned = parse_number(Earned)) %>%
   group_by (OEN) %>%
-  summarise (`Potential Credit Hours` = sum (PotHours, na.rm = TRUE),
-             `Earned Credits`  = sum (Earned, na.rm = TRUE),
-             Percent = round ((`Earned Credits` / `Potential Credit Hours`) * 100,1)) %>%
+  summarise (PotHours = sum (PotHours, na.rm = TRUE),
+             Earned  = sum (Earned, na.rm = TRUE),
+             Percent = round ((Earned / PotHours) * 100,1)) %>%
   mutate (OEN = parse_number(OEN))
 
 # SixNation - Sem 1 ------------------------------------------------------------
@@ -105,7 +106,22 @@ SixNation_Sem1 <- df %>%
                               "Grade 11" = "03_11",
                               "Grade 12" = "04_12")) %>%
   mutate (TEMP = str_detect(Exceptiona, ", Mult Except"),
-          SpecEd = ifelse (TEMP == 1, "Mult Except", Exceptiona)) %>%
+          SpecEd = ifelse (TEMP == 1, "Mult Except", Exceptiona),
+          PotHours_R = ifelse (PotHours == 0, "0", 
+                               ifelse (PotHours >0 & PotHours <1.5, "1", 
+                                       ifelse (PotHours >1.4 & PotHours <2.4, "2", 
+                                               ifelse (PotHours >2.4 & PotHours <3.4, "3", 
+                                                       ifelse (PotHours >3.4 & PotHours <4.4, "4", 
+                                                               ifelse (PotHours >4.4 & PotHours <5.4, "5", 
+                                                                       ifelse (PotHours >5.4 & PotHours <6.4, "6",
+                                                                               ifelse (PotHours >6.4 & PotHours <7.4, "7", "8+")
+                                                                               )
+                                                                       )
+                                                               )
+                                                       )
+                                               )
+                                       )
+                               )) %>%
   select (-SchoolName, -Exceptiona, -TEMP)
 
 # SixNation - Sem 2 ------------------------------------------------------------
@@ -124,8 +140,23 @@ SixNation_Sem2 <- df %>%
                               "11" = "03_11",
                               "12" = "04_12")) %>%
   mutate (TEMP = str_detect(Exceptiona, ", Mult Except"),
-          SpecEd = ifelse (TEMP == 1, "Mult Except", Exceptiona)) %>%
-  select (-SchoolName, -Grade, -Exceptiona, -TEMP)
+          SpecEd = ifelse (TEMP == 1, "Mult Except", Exceptiona),
+          PotHours_R = ifelse (PotHours == 0, "0", 
+                               ifelse (PotHours >0 & PotHours <1.5, "1", 
+                                       ifelse (PotHours >1.4 & PotHours <2.4, "2", 
+                                               ifelse (PotHours >2.4 & PotHours <3.4, "3", 
+                                                       ifelse (PotHours >3.4 & PotHours <4.4, "4", 
+                                                               ifelse (PotHours >4.4 & PotHours <5.4, "5", 
+                                                                       ifelse (PotHours >5.4 & PotHours <6.4, "6",
+                                                                               ifelse (PotHours >6.4 & PotHours <7.4, "7", "8+")
+                                                                       )
+                                                               )
+                                                       )
+                                               )
+                                       )
+                               )
+          )) %>%
+  select (-SchoolName, -Exceptiona, -TEMP)
 
 # Courses -----------------------------------------------------------------
 
@@ -147,5 +178,3 @@ Courses <- sem1 %>%
   left_join(SixNationALL %>%
               select (OEN, tuition),
             by = c ("OEN"))
-
-
