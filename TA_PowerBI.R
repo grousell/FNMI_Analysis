@@ -203,6 +203,6 @@ Courses <- sem1 %>%
                            "LNAAO" = "LNAAO Cayuga Language, Level 1",
                            "LNABO" = "LNABO Cayuga Language, Level 2")) %>%
   mutate (tuition = falseifNA(tuition)) %>%
-  mutate (tution = ifelse (tuition == "Six Nations", "Six Nations", "Non Six Nations"))
+  mutate (tuition = ifelse (tuition == "Six Nations", "Six Nations", "Non Six Nations"))
 
 
