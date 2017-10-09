@@ -36,10 +36,13 @@ df <- read_csv ("C:/Users/grousell/OneDrive - Grand Erie DSB/PowerBI/MasterData/
                           "12" = "Grade 12"))
 
 SixNationALL <- df %>%
-  select (MIDENT, OEN, GivenName, Surname, SelfID, tuition, Grade, Grade_Sort) %>%
-  mutate (dup = duplicated (OEN)) %>%
+  select (MIDENT, OEN, GivenName, Surname, SelfID, tuition, Grade, Grade_Sort, Exceptiona) %>%
+  mutate (dup = duplicated (OEN),
+          Year = "2016-2017") %>%
   filter (dup == "FALSE") %>%
-  select (-dup)
+  mutate (TEMP = str_detect(Exceptiona, ", Mult Except"),
+          SpecEd = ifelse (TEMP == 1, "Mult Except", Exceptiona)) %>%
+  select (-dup, -TEMP, -Exceptiona)
 
 # Semster 1 RC ------------------------------------------------------------
 
@@ -122,7 +125,8 @@ SixNation_Sem1 <- df %>%
                                                )
                                        )
                                )) %>%
-  select (-SchoolName, -Exceptiona, -TEMP)
+  select (-SchoolName, -Exceptiona, -TEMP) %>%
+  filter (!is.na(PotHours) )
 
 # SixNation - Sem 2 ------------------------------------------------------------
 SixNation_Sem2 <- df %>%
@@ -156,7 +160,8 @@ SixNation_Sem2 <- df %>%
                                        )
                                )
           )) %>%
-  select (-SchoolName, -Exceptiona, -TEMP)
+  select (-SchoolName, -Exceptiona, -TEMP) %>%
+  filter (!is.na(PotHours) )
 
 # Courses -----------------------------------------------------------------
 
@@ -178,3 +183,5 @@ Courses <- sem1 %>%
   left_join(SixNationALL %>%
               select (OEN, tuition),
             by = c ("OEN"))
+
+
