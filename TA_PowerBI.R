@@ -128,6 +128,7 @@ SixNation_Sem1 <- df %>%
   select (-SchoolName, -Exceptiona, -TEMP) %>%
   filter (!is.na(PotHours) )
 
+
 # SixNation - Sem 2 ------------------------------------------------------------
 
 SixNation_Sem2 <- df %>%
@@ -198,6 +199,6 @@ Courses <- sem1 %>%
                            "LNAAO" = "LNAAO Cayuga Language, Level 1",
                            "LNABO" = "LNABO Cayuga Language, Level 2")
   ) %>%
-  mutate (tuition = ifelse (tution = "Six Nations", "Six Nations", "Non Six Nations"))
+  mutate (tuition = ifelse (tuition == "Six Nations", "Six Nations", "Non Six Nations"))
 
 
