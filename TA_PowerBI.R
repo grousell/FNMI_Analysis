@@ -129,6 +129,7 @@ SixNation_Sem1 <- df %>%
   filter (!is.na(PotHours) )
 
 # SixNation - Sem 2 ------------------------------------------------------------
+
 SixNation_Sem2 <- df %>%
   filter (month == 3) %>%
   left_join(sem2Credits, by = c("OEN")) %>%
@@ -182,6 +183,19 @@ Courses <- sem1 %>%
   filter (Course %in% codes) %>%
   left_join(SixNationALL %>%
               select (OEN, tuition),
-            by = c ("OEN"))
+            by = c ("OEN")) %>%
+  mutate (Course = recode (Course, 
+                           "NAC1O" = "NAC1O Expressing Aboriginal Cultures",
+                           "NAC2O" = "NAC2O Aboriginal People in Canada",
+                           "NDA3M" = "NDA3M Current Aboriginal Issues in Canada",
+                           "NBE3C" = "NBE3C English: Contemporary Aboriginal Voices",
+                           "NBV3E" = "NBV3E Aboriginal Beliefs, Values and Aspirations",
+                           "NDG4M" = "NDG4M Aboriginal Governance: Emerging Directions", 
+                           "NDW4M" = "NDW4M Issues of Indigenous Peoples in a Global Context",
+                           "LNMAO" = "LNMAO Mohawk Language, Level 1",
+                           "LNMBO" = "LNMBO Mohawk Language, Level 2",
+                           "LNAAO" = "LNAAO Cayuga Language, Level 1",
+                           "LNABO" = "LNABO Cayuga Language, Level 2"
+  ))
 
 
