@@ -196,8 +196,7 @@ Courses <- sem1 %>%
                            "LNMAO" = "LNMAO Mohawk Language, Level 1",
                            "LNMBO" = "LNMBO Mohawk Language, Level 2",
                            "LNAAO" = "LNAAO Cayuga Language, Level 1",
-                           "LNABO" = "LNABO Cayuga Language, Level 2"
-  )
+                           "LNABO" = "LNABO Cayuga Language, Level 2")
   )
 
 
