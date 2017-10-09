@@ -169,6 +169,10 @@ SixNation_Sem2 <- df %>%
 
 codes <- c("NBE3C", "NBE3E", "NBV3E", "NAC1O", "NAC2O", "NDG4M", "NDW4M", "LNMAO", "LNMBO", "LNAAO", "LNABO")
 
+falseifNA <- function(x){
+  ifelse(is.na(x), FALSE, x)
+}
+
 Courses <- sem1 %>%
   select (MIDENT = SCHOOLID, 
           OEN,
@@ -197,8 +201,8 @@ Courses <- sem1 %>%
                            "LNMAO" = "LNMAO Mohawk Language, Level 1",
                            "LNMBO" = "LNMBO Mohawk Language, Level 2",
                            "LNAAO" = "LNAAO Cayuga Language, Level 1",
-                           "LNABO" = "LNABO Cayuga Language, Level 2")
-  ) %>%
-  mutate (tuition = ifelse (tuition == "Six Nations", "Six Nations", "Non Six Nations"))
+                           "LNABO" = "LNABO Cayuga Language, Level 2")) %>%
+  mutate (tuition = falseifNA(tuition)) %>%
+  mutate (tution = ifelse (tuition == "Six Nations", "Six Nations", "Non Six Nations"))
 
 
