@@ -198,6 +198,6 @@ Courses <- sem1 %>%
                            "LNAAO" = "LNAAO Cayuga Language, Level 1",
                            "LNABO" = "LNABO Cayuga Language, Level 2")
   ) %>%
-  mutate (tuition = ifelse (tution = "Six Nations", "Six Nations", "Other"))
+  mutate (tuition = ifelse (tution = "Six Nations", "Six Nations", "Non Six Nations"))
 
 
