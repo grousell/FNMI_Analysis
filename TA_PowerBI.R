@@ -65,7 +65,9 @@ sem1Credits <- sem1 %>%
   summarise (PotHours = sum (PotHours, na.rm = TRUE),
              Earned  = sum (Earned, na.rm = TRUE),
              Percent = round ((Earned / PotHours) * 100,1)) %>%
-  mutate (OEN = parse_number(OEN))
+  mutate (OEN = parse_number(OEN),
+          `Credits Attempted` = ifelse (PotHours < 1.9, "Less than 2", 
+                                        ifelse (PotHours > 1.9 & PotHours <3.9, "Two to Three", "Four or More")))
 
 # Semster 2 RC ------------------------------------------------------------
 
@@ -90,7 +92,11 @@ sem2Credits <- sem2 %>%
   summarise (PotHours = sum (PotHours, na.rm = TRUE),
              Earned  = sum (Earned, na.rm = TRUE),
              Percent = round ((Earned / PotHours) * 100,1)) %>%
-  mutate (OEN = parse_number(OEN))
+  mutate (OEN = parse_number(OEN),
+          `Credits Attempted` = ifelse (PotHours < 3.9, "Less than 4", 
+                                        ifelse (PotHours > 3.9 & PotHours <5.9, "Four to Five", 
+                                                ifelse (PotHours > 5.9 & PotHours < 8, "Six to Seven", 
+                                                        "Eight or More"))))
 
 # SixNation - Sem 1 ------------------------------------------------------------
 
