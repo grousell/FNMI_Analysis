@@ -67,7 +67,11 @@ sem1Credits <- sem1 %>%
              Percent = round ((Earned / PotHours) * 100,1)) %>%
   mutate (OEN = parse_number(OEN),
           `Credits Attempted` = ifelse (PotHours < 1.9, "Less than 2", 
-                                        ifelse (PotHours > 1.9 & PotHours <3.9, "Two to Three", "Four or More")))
+                                        ifelse (PotHours > 1.9 & PotHours <3.9, "Two to Three", "Four or More")),
+          CreditsAttempted_SORT = recode (`Credits Attempted`,
+                                          "Less than 2" = "01_Less2",
+                                          "Two to Three" = "02_2to3",
+                                          "Four or More" = "03_FourMore"))
 
 # Semster 2 RC ------------------------------------------------------------
 
@@ -96,7 +100,12 @@ sem2Credits <- sem2 %>%
           `Credits Attempted` = ifelse (PotHours < 3.9, "Less than 4", 
                                         ifelse (PotHours > 3.9 & PotHours <5.9, "Four to Five", 
                                                 ifelse (PotHours > 5.9 & PotHours < 8, "Six to Seven", 
-                                                        "Eight or More"))))
+                                                        "Eight or More"))),
+          CreditsAttempted_SORT = recode (`Credits Attempted`,
+                                          "Less than 4" = "01_Less4",
+                                          "Four to Five" = "02_FourFive",
+                                          "Six to Seven" = "03_SixSeven",
+                                          "Eight or More" = "04_EightMore"))
 
 # SixNation - Sem 1 ------------------------------------------------------------
 
