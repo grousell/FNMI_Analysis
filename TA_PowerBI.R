@@ -1,8 +1,67 @@
 # Tuition Agreement Students Annual Report -------------------------------
 
+# Load Packages -----------------------------------------------------------
+
 library(tidyverse)
 library(readxl)
 library(stringr)
+library(scales)
+
+# Load Functions ----------------------------------------------------------
+
+na_missing <- function (x) {
+  x[is.na(x)] <- "Missing"
+  return(x)
+}
+
+substrRight <- function(x, n){
+  sapply(x, function(xx)
+    substr(xx, (nchar(xx)-n+1), nchar(xx))
+  )
+}
+
+
+# ggplot theme and colours ------------------------------------------------------------
+# For custom board colours
+
+gedsbGreen <- "#59AD46"
+gedsbBlue <- "#04559F"
+gedsbGreen2 <- "#8CE079"
+gedsbBlue2 <- "#51A2EC"
+
+# Colour Palette - GEDSB Colours for charts
+
+palette3 <- c("#59AD46", "#173B32", "#04559F")
+palette4 <- c("grey60","#04559F","#59AD46", "#A6FA93")
+palette5 <- c("#04559F", "#1E6FB9", "#3788D2", "#51A2Ec", "#6ABBFF")
+palette5 <- c("#6ABBFF", "#51A2Ec", "#3788D2",  "#1E6FB9","#04559F" )
+
+theme_update(
+  plot.margin= unit(c(0.25,0.25,0.25,0.25), "cm"),
+  plot.title = element_text (colour="black", size=16, hjust = 0.5),
+  
+  panel.background = element_rect(fill="NA"),
+  panel.border = element_blank(),
+  panel.spacing = unit(1, "lines"),
+  
+  panel.grid.major.y = element_line(colour="grey90"),
+  panel.grid.minor.y = element_line(colour="NA"),
+  panel.grid.major.x = element_line(colour="NA"),
+  panel.grid.minor.x = element_line(colour="NA"),
+  
+  axis.text.y = element_text (colour="black", size=12, hjust=1),
+  axis.title.y = element_text (colour="black", size=14, angle=90),
+  
+  axis.text.x = element_text (colour="black", size=12,angle=0),
+  axis.title.x = element_text (colour="black", size=14),
+  
+  axis.ticks = element_blank(),
+  
+  legend.text = element_text (colour="black", size = 14),
+  legend.position = ("right"),
+  legend.title = element_blank(),
+  legend.key = element_blank()
+)
 
 # School Master List -----------------------------------------------------
 
@@ -156,10 +215,10 @@ SixNation_Sem2 <- df %>%
                           "11" = "Grade 11",
                           "12" = "Grade 12"),
           Grade_Sort = recode(Grade, 
-                              "9" = "01_9",
-                              "10" = "02_10",
-                              "11" = "03_11",
-                              "12" = "04_12")) %>%
+                              "Grade 9" = "01_9",
+                              "Grade 10" = "02_10",
+                              "Grade 11" = "03_11",
+                              "Grade 12" = "04_12")) %>%
   mutate (TEMP = str_detect(Exceptiona, ", Mult Except"),
           SpecEd = ifelse (TEMP == 1, "Mult Except", Exceptiona),
           PotHours_R = ifelse (PotHours == 0, "0", 
@@ -222,5 +281,73 @@ Courses <- sem1 %>%
           tuition_R = recode (tuition, 
                               "Six Nations" = "01_SixNations",
                               "Non Six Nations" = "02_NonSixNations"))
+
+
+
+
+
+
+# Add DOB to recode for Grade 12+ -----------------------------------------
+
+dob <- read_csv ("C:/Users/grousell/OneDrive - Grand Erie DSB/PowerBI/MasterData/StudentDetail_20162017.csv") %>%
+  #filter (month == 3) %>%
+  filter (tuition == "Six Nations") %>%
+  select (OEN = StudentID, 
+          Birthdate,
+          GradeCode,
+          Gender = SexCode) %>%
+  distinct (OEN, 
+            Birthdate,
+            GradeCode,
+            Gender) %>%
+  mutate (BirthYear = substrRight(Birthdate, 4))
+
+# Credit Accumulation -----------------------------------------------------
+credits <- read_csv ("C:/Users/grousell/OneDrive - Grand Erie DSB/Student Success/Credit Accumulation/CreditAccumulation 2016-2017.csv") %>%
+  filter (`Tuition Agreement` == "Government of Canada") %>%
+  mutate (MIDENT = recode (School, 
+                           "Brantford Collegiate Institute and V.S."="896187",
+                           "Cayuga Secondary School"="899046",
+                           "Delhi District Secondary School"="903728",
+                           "Dunnville Secondary School"="906069",
+                           "Grand Erie Learning Alternatives"="891304",
+                           "Grand Erie Learning Alternatives - Adult"="891304",
+                           "Grand Erie Learning Alternatives - ILC"="891304",
+                           "Grand Erie Learning Alternatives - Night School"="891304",
+                           "Grand Erie Learning Alternatives - PSW"="891304",
+                           "Grand Erie Learning Alternatives - Summer School"="891304",
+                           "Hagersville Secondary School"="915033",
+                           "McKinnon Park Secondary School"="898007",
+                           "North Park Collegiate and V.S."="930245",
+                           "Paris District High School"="933490",
+                           "Pauline Johnson Collegiate and V.S."="934402",
+                           "Simcoe Composite School"="941557",
+                           "Tollgate Technological Skills Centre"="916412",
+                           "Valley Heights Secondary School"="949035",
+                           "Waterford District High School"="950785")) %>%
+  select (MIDENT, 
+          OEN, 
+          Grade,
+          Gender,
+          `Tuition Agreement`,
+          `Attempted To Date`,
+          `Achieved To Date`) %>%
+  mutate (Gender = ifelse (Gender == "F", "Female", "Male")) %>%
+  left_join (dob, by = c("OEN"))
+
+
+# Recode Grade for 12+ ----------------------------------------------------
+
+credits <- credits %>%
+  mutate (temp = BirthYear, 
+          temp = ifelse (BirthYear == 2003, "9",
+                            ifelse (BirthYear == 2002, "9",
+                                    ifelse (BirthYear == 2001, "10",
+                                            ifelse (BirthYear == 2000, "11",
+                                                    ifelse (BirthYear == 1999, "12", 
+                                                            ifelse (BirthYear < 1999, "12+", "NO DATA")))))),
+          temp = na_missing(temp),
+          Grade_R = ifelse (temp == "Missing", Grade, temp)) %>%
+  select(-temp, -Birthdate, -BirthYear)
 
 
